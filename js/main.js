@@ -10,8 +10,10 @@ canvas.width = size * 8;
 canvas.height = size * 8;
 
 let input = document.getElementById("string");
+let ev;
 
 input.addEventListener("keyup", function (event) {
+    ev = event.srcElement.value;
     if (event.keyCode === 13) {
         event.preventDefault();
         getHash(event.srcElement.value)
@@ -41,10 +43,11 @@ function draw(hash, color) {
         }
     });
 
-    let img = document.createElement("img");
+    createCard(canvas.toDataURL(), ev);
+    /*let img = document.createElement("img");
     img.src = canvas.toDataURL();
     img.classList.add("shadow-sm");
-    imgdiv.appendChild(img);
+    imgdiv.appendChild(img);*/
 }
 
 function isEven(char) {
@@ -80,4 +83,32 @@ function getHash(str, algo = "SHA-256") {
             }
             return result;
         });
+}
+
+function createCard(imgsrc, text) {
+    let cardDiv = document.createElement('div');
+    cardDiv.classList.add('card');
+    let cardimg = document.createElement("img");
+    cardimg.src = imgsrc;
+    cardimg.classList.add("card-img-top");
+    cardimg.classList.add("p-2");
+
+    let cardBody = document.createElement('div');
+    cardBody.classList.add('card-body');
+    let cardTitle = document.createElement('p');
+    cardTitle.classList.add('card-text');
+    cardTitle.textContent = text;
+
+    let cardBtn = document.createElement('a');
+    cardBtn.href = imgsrc.replace("image/png", "image/octet-stream");
+    cardBtn.setAttribute('download', text.trim().replace(/ /g, '_') + ".png");
+    cardBtn.classList.add('btn');
+    cardBtn.classList.add('btn-outline-secondary');
+    cardBtn.textContent = "Save image";
+
+    cardDiv.appendChild(cardimg);
+    cardBody.appendChild(cardTitle);
+    cardDiv.appendChild(cardBody);
+    cardBody.appendChild(cardBtn);
+    imgdiv.appendChild(cardDiv);
 }
